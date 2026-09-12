@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BCTC Radar</title>
+<meta name="description" content="Tổng hợp báo cáo tài chính theo quý/năm của các mã chứng khoán trong danh mục, biểu đồ, so sánh kỳ và cảnh báo lợi nhuận đột biến.">
+<meta name="theme-color" content="#16222C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><img src="icons/icon-192.png" alt=""><b>BCTC Radar</b><span>Báo cáo tài chính</span></div>
+    <div class="seg" role="tablist" id="mainTabs">
+      <button role="tab" aria-selected="true" data-view="list">Danh mục</button>
+      <button role="tab" aria-selected="false" data-view="alerts">Cảnh báo<span class="n" id="alertCount" data-zero="1">0</span></button>
+      <button role="tab" aria-selected="false" data-view="settings">Cài đặt</button>
+    </div>
+    <div class="status"><span class="led" id="led"></span><span id="statusText">Đang mở…</span><button class="btn sm" id="btnRefresh" title="Tải BCTC mới nhất từ VNDirect">Làm mới</button></div>
+  </header>
+
+  <div class="banner info" id="progress" hidden><span id="progressText"></span><span class="bar"><i id="progressBar" style="width:0%"></i></span></div>
+  <div class="banner" id="warnBanner" hidden><span id="warnText"></span></div>
+
+  <!-- ===== Danh mục ===== -->
+  <section class="view on" id="v-list">
+    <div class="split" id="split">
+      <aside class="panel list">
+        <div class="hd">
+          <input id="q" type="search" placeholder="Lọc mã / tên…" aria-label="Lọc danh mục" autocomplete="off">
+          <select id="sort" aria-label="Sắp xếp">
+            <option value="alert">Cảnh báo trước</option>
+            <option value="sym">Theo mã</option>
+            <option value="yoy">YoY giảm dần</option>
+            <option value="npat">LNST giảm dần</option>
+            <option value="date">Mới công bố</option>
+          </select>
+          <button class="btn sm" id="btnAdd">+ Thêm mã</button>
+        </div>
+        <div class="rows" id="rows"><div class="empty">Đang nạp…</div></div>
+      </aside>
+      <article class="panel detail" id="detail"><div class="empty">Chọn một mã để xem.</div></article>
+    </div>
+  </section>
+
+  <!-- ===== Cảnh báo ===== -->
+  <section class="view" id="v-alerts">
+    <div class="alerts">
+      <div class="panel acard">
+        <div class="sech"><h3>Lợi nhuận / lỗ đột biến</h3><span class="sub" id="alertSub"></span>
+          <div class="seg sm sp" id="alertScope"><button aria-selected="true" data-scope="unseen">Chưa xem</button><button aria-selected="false" data-scope="all">Tất cả</button></div>
+        </div>
+        <div class="chips" id="ruleChips"></div>
+        <div class="alist" id="alist"></div>
+        <div class="rowbtns"><button class="btn sm" id="btnSeenAll">Đánh dấu đã xem tất cả</button></div>
+      </div>
+      <div class="panel acard">
+        <h3 style="font-size:14px">Tóm tắt</h3>
+        <div class="stat" id="alertStat"></div>
+        <p class="hint">Cảnh báo được tạo <b>một lần</b> khi app thấy kỳ mới (hoặc kỳ cũ bị sửa số) lúc đồng bộ. Ngưỡng và quy tắc chỉnh ở tab Cài đặt — đổi ngưỡng chỉ ảnh hưởng kỳ sau, không sinh lại cảnh báo cũ.</p>
+        <p class="hint">Mỗi cảnh báo kèm link đối chiếu CafeF / Vietstock trong màn chi tiết mã. App không tự sửa số liệu nguồn.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Cài đặt ===== -->
+  <section class="view" id="v-settings">
+    <div class="settings">
+      <div class="panel card">
+        <h3>Ngưỡng cảnh báo</h3>
+        <div class="rng"><label>LNST so cùng kỳ năm trước (YoY) <b id="yoyV"></b></label><input type="range" id="yoyT" min="20" max="200" step="5"></div>
+        <div class="rng"><label>LNST so quý liền trước (QoQ) <b id="qoqV"></b></label><input type="range" id="qoqT" min="20" max="200" step="5"></div>
+        <div class="rng"><label>Doanh thu so cùng kỳ <b id="revV"></b></label><input type="range" id="revT" min="20" max="150" step="5"></div>
+        <div class="rng"><label>Lợi nhuận ngoài cốt lõi / LNTT <b id="ncV"></b></label><input type="range" id="ncT" min="10" max="80" step="5"></div>
+        <div class="rng"><label>BCTC bị điều chỉnh: LNST đổi từ <b id="rsV"></b></label><input type="range" id="rsT" min="1" max="30" step="1"></div>
+        <h3>Quy tắc</h3>
+        <div id="ruleToggles"></div>
+        <h3>Đếm lên chấm đỏ</h3>
+        <div id="badgeToggles"></div>
+      </div>
+      <div class="panel card">
+        <h3>Danh mục theo dõi <span class="muted" id="wlCount"></span></h3>
+        <div class="wlgrid" id="wlTags"></div>
+        <textarea class="box" id="wlPaste" placeholder="Dán nhiều mã, cách nhau bằng dấu phẩy / khoảng trắng / xuống dòng. VD: VNM, HPG MWG"></textarea>
+        <div class="rowbtns"><button class="btn primary sm" id="btnPasteAdd">Thêm các mã đã dán</button><span class="msg" id="wlMsg"></span></div>
+        <h3>Tự động</h3>
+        <label class="sw"><input type="checkbox" id="optNotify"><span>Thông báo trình duyệt khi có cảnh báo mới<small>Chỉ khi app đang mở (không có máy chủ nên không đẩy được khi app đã đóng).</small></span></label>
+        <div class="rng"><label>Tự làm mới khi đang mở, mỗi <b id="arV"></b></label><input type="range" id="arT" min="1" max="24" step="1"></div>
+        <p class="hint">Mở app là tự tải phần mới (tối đa 1 lần/giờ). Nút <b>Làm mới</b> ở góc trên bỏ qua giới hạn đó.</p>
+        <h3>Dữ liệu</h3>
+        <div class="rowbtns">
+          <button class="btn sm" id="btnExport">Xuất danh mục + cài đặt</button>
+          <label class="btn sm" for="fileImport">Nhập từ file<input type="file" id="fileImport" accept="application/json" hidden></label>
+          <button class="btn sm danger" id="btnWipe">Xoá toàn bộ dữ liệu đã tải</button>
+        </div>
+        <p class="hint" id="dataInfo"></p>
+        <p class="hint">Nguồn: VNDirect finfo (miễn phí, không chính thức). Số quý là số riêng từng quý, đơn vị tỷ đồng. Lịch sử: 5 năm quý, 10 năm năm.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- hộp thêm mã nhanh -->
+<dialog id="dlgAdd" style="border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);padding:16px;max-width:340px;width:calc(100% - 32px)">
+  <form method="dialog" style="display:flex;flex-direction:column;gap:10px">
+    <b>Thêm mã vào danh mục</b>
+    <input id="addSym" class="box" style="min-height:0;text-transform:uppercase" placeholder="VD: VNM" autocomplete="off" maxlength="8">
+    <span class="msg" id="addMsg"></span>
+    <div class="rowbtns" style="justify-content:flex-end"><button class="btn sm" value="cancel">Huỷ</button><button class="btn primary sm" id="addOk" value="ok">Thêm</button></div>
+  </form>
+</dialog>
+
+<script src="js/metrics.js"></script>
+<script src="js/rules.js"></script>
+<script src="js/store.js"></script>
+<script src="js/finfo.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
