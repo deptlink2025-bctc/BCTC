@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BCTC Radar</title>
 <meta name="description" content="Tổng hợp báo cáo tài chính theo quý/năm của các mã chứng khoán trong danh mục, biểu đồ, so sánh kỳ và cảnh báo lợi nhuận đột biến.">
-<meta name="theme-color" content="#16222C">
+<meta name="theme-color" content="#171614">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -17,7 +17,16 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><img src="icons/icon-192.png" alt=""><b>BCTC Radar</b><span>Báo cáo tài chính</span></div>
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#171614"/>
+        <path d="M13 51 A 38 38 0 0 1 51 13" fill="none" stroke="#F4F1EA" stroke-width="2.6" stroke-linecap="round"/>
+        <rect x="13" y="38" width="8" height="13" fill="#B8862B"/>
+        <rect x="26.5" y="31" width="8" height="20" fill="#B8862B"/>
+        <rect x="40" y="22" width="8" height="29" fill="#D9B25F"/>
+      </svg>
+      <div class="bt"><b>BCTC Radar</b><span>Báo cáo tài chính · cảnh báo đột biến</span></div>
+    </div>
     <div class="seg" role="tablist" id="mainTabs">
       <button role="tab" aria-selected="true" data-view="list">Danh mục</button>
       <button role="tab" aria-selected="false" data-view="alerts">Cảnh báo<span class="n" id="alertCount" data-zero="1">0</span></button>
@@ -108,10 +117,10 @@
 </div>
 
 <!-- hộp thêm mã nhanh -->
-<dialog id="dlgAdd" style="border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);padding:16px;max-width:340px;width:calc(100% - 32px)">
+<dialog id="dlgAdd">
   <form method="dialog" style="display:flex;flex-direction:column;gap:10px">
     <b>Thêm mã vào danh mục</b>
-    <input id="addSym" class="box" style="min-height:0;text-transform:uppercase" placeholder="VD: VNM" autocomplete="off" maxlength="8">
+    <input id="addSym" class="box" style="min-height:0;text-transform:uppercase;resize:none" placeholder="VD: VNM" autocomplete="off" maxlength="8">
     <span class="msg" id="addMsg"></span>
     <div class="rowbtns" style="justify-content:flex-end"><button class="btn sm" value="cancel">Huỷ</button><button class="btn primary sm" id="addOk" value="ok">Thêm</button></div>
   </form>
