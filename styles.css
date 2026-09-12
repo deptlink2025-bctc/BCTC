@@ -47,9 +47,9 @@ a{color:var(--accent-strong)}
 /* ---- thanh trên ---- */
 .top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:16px 12px;border-bottom:2px solid var(--rule);margin-bottom:14px}
 .brand{display:flex;align-items:center;gap:12px}
-.brand .logo{width:38px;height:38px;flex:none}
+.brand .logo{width:30px;height:30px;flex:none}
 .brand .bt{display:flex;flex-direction:column;line-height:1.1}
-.brand b{font-size:19px;font-weight:800;letter-spacing:.02em;text-transform:uppercase}
+.brand b{font-size:17px;font-weight:800;letter-spacing:.02em;text-transform:uppercase}
 .brand span{color:var(--text-mute);font-size:11.5px;letter-spacing:.04em}
 .status{margin-left:auto;font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .status .led{width:9px;height:9px;border-radius:50%;background:var(--up);flex:none}

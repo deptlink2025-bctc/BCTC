@@ -36,7 +36,9 @@ python -m http.server 8080
 4. Trên Android: mở link bằng Chrome → menu ⋮ → *Cài đặt ứng dụng*. Mở từ màn hình chính
    thì vẫn mở được khi mất mạng (số đã lưu), có mạng thì tự tải phần mới.
 
-Mỗi lần sửa file tĩnh, **tăng `VERSION` trong `sw.js`** để điện thoại nhận bản mới.
+Mỗi lần sửa file tĩnh, **tăng phiên bản ở 2 chỗ**: `VERSION` trong `sw.js` và `?v=` trên các link
+`styles.css` / `js/*.js` trong `index.html` (GitHub Pages cho cache 10 phút, không có `?v=` mới thì
+trình duyệt vẫn dùng CSS/JS cũ dù HTML đã mới).
 
 **Test logic** (không cần trình duyệt): `node tests/run.js` — fixture là JSON thật của VNDirect.
 
